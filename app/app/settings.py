@@ -44,7 +44,9 @@ DJANGO_APPS = [
     'django.contrib.staticfiles',
 ]
 TIRD_PARTY_APPS = []
-OWN_APPS = []
+OWN_APPS = [
+    'core',
+]
 
 INSTALLED_APPS = DJANGO_APPS + TIRD_PARTY_APPS + OWN_APPS
 
