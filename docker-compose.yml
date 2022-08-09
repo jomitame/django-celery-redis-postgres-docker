@@ -20,6 +20,8 @@ services:
       - DB_NAME=devdb
       - DB_USER=devuser
       - DB_PASS=changeme
+      - CELERY_BROKER=redis://redis:6379/0
+    container_name: django_app
     depends_on:
       - db
 
@@ -29,3 +31,28 @@ services:
       - POSTGRES_DB=devdb
       - POSTGRES_USER=devuser
       - POSTGRES_PASSWORD=changeme
+    container_name: postgres_db
+
+  redis:
+    image: redis:alpine
+    container_name: redis
+  
+  celery:
+    restart: always
+    build:
+      context: .
+    command: celery -A app worker -l info
+    volumes:
+      - ./app:/app
+    environment:
+      - SECRET_KEY=devsecretkey
+      - DB_HOST=db
+      - DB_NAME=devdb
+      - DB_USER=devuser
+      - DB_PASS=changeme
+      - CELERY_BROKER=redis://redis:6379/0
+    container_name: celery
+    depends_on:
+      - db
+      - redis
+      - app
