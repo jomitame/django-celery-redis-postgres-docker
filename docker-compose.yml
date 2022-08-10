@@ -56,3 +56,19 @@ services:
       - db
       - redis
       - app
+  
+  celery-beat:
+    restart: always
+    build:
+      context: .
+    command: celery -A app beat -l info
+    volumes:
+      - ./app:/app
+    environment:
+      - SECRET_KEY=devsecretkey
+      - CELERY_BROKER=redis://redis:6379/0
+    container_name: beat
+    depends_on:
+      - db
+      - redis
+      - app
