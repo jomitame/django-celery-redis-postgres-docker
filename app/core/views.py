@@ -65,7 +65,6 @@ class BudgetCreateView(CreateView):
             category, _ = Category.objects.get_or_create(
                 name = category_name
             )
-            category.save()
 
         return HttpResponseRedirect(self.get_success_url())
 

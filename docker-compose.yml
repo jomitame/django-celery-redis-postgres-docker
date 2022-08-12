@@ -32,6 +32,8 @@ services:
       - POSTGRES_USER=devuser
       - POSTGRES_PASSWORD=changeme
     container_name: postgres_db
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
 
   redis:
     image: redis:alpine
@@ -72,3 +74,6 @@ services:
       - db
       - redis
       - app
+
+volumes:
+  postgres-data:
