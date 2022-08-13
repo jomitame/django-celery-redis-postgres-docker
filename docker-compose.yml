@@ -39,7 +39,7 @@ services:
     image: redis:alpine
     container_name: redis
   
-  celery:
+  celery-worker:
     restart: always
     build:
       context: .
@@ -53,7 +53,7 @@ services:
       - DB_USER=devuser
       - DB_PASS=changeme
       - CELERY_BROKER=redis://redis:6379/0
-    container_name: celery
+    container_name: celery_worker
     depends_on:
       - db
       - redis
@@ -69,11 +69,28 @@ services:
     environment:
       - SECRET_KEY=devsecretkey
       - CELERY_BROKER=redis://redis:6379/0
-    container_name: beat
+    container_name: celery_beat
     depends_on:
       - db
       - redis
       - app
+  
+  celery-flower:
+    restart: always
+    build:
+      context: .
+    command: flower -A app --port=5555 --broker=redis://redis:6379/0
+    ports:
+      - 5555:5555
+    environment:
+      - SECRET_KEY=devsecretkey
+      - DEBUG=1
+      - CELERY_BROKER=redis://redis:6379/0
+    container_name: celery_flower
+    depends_on:
+      - app
+      - redis
+      - celery-worker
 
 volumes:
   postgres-data:
